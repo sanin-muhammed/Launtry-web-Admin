@@ -1,0 +1,99 @@
+/* .authPage_container .skip_btn{
+    width: 40px;
+    left: 30px;
+    transition: .3s ease-in-out;
+}
+.authPage_container .skip_btn:hover{
+    transform: rotate(30deg);
+} */
+.loginPage_container{
+    position: relative;
+    background: #20adf3;
+    min-height:100vh ;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 50px 20px;
+}
+.loginPage_container .brand_name{
+    color: #fff;
+    text-align: center;
+    font-weight: 500;
+    font-size: 2.4em;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: start ;
+    gap: 10px;
+    align-items: center;
+    color: #fff;
+}
+form input,form button{
+    width: 100%;
+    max-width: 400px;
+    padding: 20px 20px;
+    border: none;
+    border-radius: 30px;
+    font-weight: 500;
+    outline: none;
+}
+form input::placeholder{
+    color: #8391a190 ;
+}
+/* form .auth_btn{
+    width: 400px;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 30px;
+} */
+form p{
+    text-align: center;
+}
+.forgot_password{
+    cursor: pointer;
+    width: 100%;
+    max-width: 400px;
+    color: #fff;
+    text-align: right;
+    padding: 0 10px;
+    font-weight: 500;
+    font-size: .9em;
+    text-decoration: none;
+}
+.links{
+    margin:auto auto 0 ;
+    /* margin-top: 17%; */
+}
+.forgot_password.link{
+    text-decoration: underline;
+}
+.error_msg{
+    width: 100%;
+    max-width: 380px;
+    animation: opacityAnimation .4s ease-out ;
+    transition: .3s ease-in-out;
+    color: rgba(149, 9, 9, 0.862) !important;
+    font-weight: bold !important;
+}
+.frame_img{
+    width: 500px;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+}
+
+@media (max-width:500px) {
+   
+    .loginPage_container .brand_name{
+        font-size: 1.5em;
+    }
+}
+@media (max-width:350px) {
+    
+    .loginPage_container .brand_name{
+        font-size: 1.2em;
+    }
+}
