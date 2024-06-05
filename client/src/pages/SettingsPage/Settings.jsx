@@ -12,8 +12,9 @@ import { useEffect, useState } from "react";
 import Banner from "../../components/Banners/Banner";
 import { enqueueSnackbar } from "notistack";
 import { setBanners } from "../../Redux/reducers/banners";
+import Offer from "../../components/Offers/Offer";
 const Settings = () => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const { admin } = useSelector((state) => state.admin);
 
     const handleBannerImg = async (e) => {
@@ -36,13 +37,12 @@ const Settings = () => {
     };
 
     const fetchBanner = async () => {
-        const response =await all_banners();
+        const response = await all_banners();
         dispatch(setBanners(response.data));
     };
 
     useEffect(() => {
         fetchBanner();
-        
     });
 
     return (
@@ -76,7 +76,9 @@ const Settings = () => {
                         <TabPanel value="1">
                             <Banner />
                         </TabPanel>
-                        <TabPanel value="2">Item Two</TabPanel>
+                        <TabPanel value="2">
+                            <Offer />
+                        </TabPanel>
                         <TabPanel value="3">Item Three</TabPanel>
                         <TabPanel value="4">Item Four</TabPanel>
                         <TabPanel value="5">Item Three</TabPanel>
