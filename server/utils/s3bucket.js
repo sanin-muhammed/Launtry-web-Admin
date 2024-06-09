@@ -19,6 +19,8 @@ const storage = multerS3({
     metadata: function (req, file, cb) {
         cb(null, { fieldName: file.fieldname });
     },
+    contentType: multerS3.AUTO_CONTENT_TYPE, // Automatically set the correct Content-Type
+    contentDisposition: "inline", // Ensure the file is displayed inline
     key: function (req, file, cb) {
         cb(null, Date.now().toString() + "-" + file.originalname);
     },

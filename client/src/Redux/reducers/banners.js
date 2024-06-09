@@ -5,7 +5,7 @@ const initialState = {
 };
 
 const bannerSlice = createSlice({
-    name: "admin",
+    name: "banner",
     initialState,
     reducers: {
         setBanners(state, action) {

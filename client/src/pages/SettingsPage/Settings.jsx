@@ -6,13 +6,16 @@ import TabPanel from "@mui/lab/TabPanel";
 import Tab from "@mui/material/Tab";
 import Box from "@mui/material/Box";
 import "./style.css";
-import { all_banners, editBannerImg } from "../../Actions/actions";
+import { allBanners, allOffers, allServices, editBannerImg } from "../../Actions/actions";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import Banner from "../../components/Banners/Banner";
 import { enqueueSnackbar } from "notistack";
 import { setBanners } from "../../Redux/reducers/banners";
 import Offer from "../../components/Offers/Offer";
+import { setOffers } from "../../Redux/reducers/offers";
+import Service from "../../components/AppServices/Service";
+import { setServices } from "../../Redux/reducers/services";
 const Settings = () => {
     const dispatch = useDispatch();
     const { admin } = useSelector((state) => state.admin);
@@ -37,12 +40,22 @@ const Settings = () => {
     };
 
     const fetchBanner = async () => {
-        const response = await all_banners();
+        const response = await allBanners();
         dispatch(setBanners(response.data));
+    };
+    const fetchOffer = async () => {
+        const response = await allOffers();
+        dispatch(setOffers(response.data));
+    };
+    const fetchservice = async () => {
+        const response = await allServices();
+        dispatch(setServices(response.data));
     };
 
     useEffect(() => {
         fetchBanner();
+        fetchOffer();
+        fetchservice()
     });
 
     return (
@@ -79,7 +92,9 @@ const Settings = () => {
                         <TabPanel value="2">
                             <Offer />
                         </TabPanel>
-                        <TabPanel value="3">Item Three</TabPanel>
+                        <TabPanel value="3">
+                            <Service />
+                        </TabPanel>
                         <TabPanel value="4">Item Four</TabPanel>
                         <TabPanel value="5">Item Three</TabPanel>
                         <TabPanel value="6">Item Three</TabPanel>

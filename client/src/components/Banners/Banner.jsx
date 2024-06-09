@@ -33,7 +33,10 @@ const Banner = () => {
     };
     const handleEditBanner = async (e) => {
         e.preventDefault();
-
+        if(!bannerImage){
+            enqueueSnackbar("choose a image", { variant: "warning" });
+            return
+        }
         const formData = new FormData();
         formData.append("id", BannerId);
         formData.append("bannerImage", bannerImage);
@@ -112,7 +115,7 @@ const Banner = () => {
                 <tbody>
                     {banners.map((item, index) => (
                         <tr key={index}>
-                            <td>{index + 1}</td>
+                            <td className="sl_td">{index + 1}</td>
                             <td className="banner_td">
                                 <img src={item.bannerImage} alt="banner" className="banner_img" />
                             </td>

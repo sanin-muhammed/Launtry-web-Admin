@@ -52,14 +52,12 @@ p.edit{
     width: 100% !important;
     visibility: visible;
     border-radius: 0;
-    /* margin: 0;
-    padding: 0; */
 }
 .banner_td{
     width: 100%;
-    padding: 7px !important;
+    padding: 27px !important;
 }
-.banner_td .banner_img{
+ .banner_img{
     width: 70px;
     height: 40px ;
 }

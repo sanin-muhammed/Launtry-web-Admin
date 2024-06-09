@@ -5,20 +5,19 @@ import { Modal as BaseModal } from "@mui/base/Modal";
 import React, { useState } from "react";
 import editImg from "../../assets/edit.svg";
 import deleteImg from "../../assets/trash.svg";
-import { addOffer, deleteOffer, editOffer } from "../../Actions/actions";
+import { addService, deleteService, editService } from "../../Actions/actions";
 import { enqueueSnackbar } from "notistack";
 import { useSelector } from "react-redux";
 import "./style.css";
 
-const Offer = () => {
-    const { offers } = useSelector((state) => state.offers);
+const Service = () => {
+    const { services } = useSelector((state) => state.services);
 
-    const [OfferId, setOfferId] = useState("");
-    console.log({ OfferId });
-    const [formData, setFormData] = useState({
-        offer: "",
-        price: "",
-    });
+    const [serviceImage, setServiceImage] = useState("");
+    const [service, setService] = useState("");
+    const [ServiceId, setServiceId] = useState("");
+    console.log({ ServiceId });
+
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [createOpen, setCreateOpen] = useState(false);
@@ -29,43 +28,53 @@ const Offer = () => {
     const handleCreateOpen = () => setCreateOpen(true);
     const handleCreateClose = () => setCreateOpen(false);
 
+    const handleserviceImage = (e) => {
+        e.preventDefault();
+        setServiceImage(e.target.files[0]);
+    };
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setService(e.target.value);
     };
     const handleEditOpen = (id) => {
-        const item = offers.find((item) => {
-            console.log(item._id);
+        const item = services.find((item) => {
             return item._id === id;
         });
-        setOfferId(item._id);
-        const { offer, price } = item;
-        setFormData({ offer, price });
-        console.log("offer =", item);
+
+        setServiceId(item._id);
+        setService(item.service);
+        console.log("service =", item);
 
         setEditOpen(true);
     };
 
     const handleDeleteOpen = (id) => {
-        setOfferId(id);
+        setServiceId(id);
         setDeleteOpen(true);
     };
 
-    const handleSubmitOffer = async (e) => {
+    const handleSubmitService = async (e) => {
         e.preventDefault();
-
-        const response = await addOffer(formData);
+        const formData = new FormData();
+        formData.append("serviceImage", serviceImage);
+        formData.append("service", service);
+        const response = await addService(formData);
         console.log({ response });
         if (response.status) {
             enqueueSnackbar(response.message, { variant: "success" });
             handleCreateClose();
         }
     };
-    const handleEditOffer = async (e) => {
+    const handleEditService = async (e) => {
         e.preventDefault();
-        console.log("formdata =", formData);
-
-        const response = await editOffer(formData, OfferId);
+        if(!serviceImage && !service){
+            enqueueSnackbar("fill the field you want to update ", { variant: "warning" });
+            return
+        }
+        console.log("formdata =", { service });
+        const formData = new FormData();
+        formData.append("serviceImage", serviceImage);
+        formData.append("service", service);
+        const response = await editService(formData, ServiceId);
         console.log({ response });
         if (response.status) {
             enqueueSnackbar(response.message, { variant: "success" });
@@ -73,8 +82,8 @@ const Offer = () => {
         }
     };
 
-    const handleDeleteOffer = async () => {
-        const response = await deleteOffer(OfferId);
+    const handleDeleteService = async () => {
+        const response = await deleteService(ServiceId);
         console.log({ response });
         if (response.error) {
             enqueueSnackbar(response.message, { variant: "error" });
@@ -88,16 +97,16 @@ const Offer = () => {
         <div className="banner_component">
             <div>
                 <TriggerButton className="create_btn" type="button" onClick={handleCreateOpen}>
-                    Create Offer
+                    Create Service
                 </TriggerButton>
                 <Modal aria-labelledby="unstyled-modal-title" aria-describedby="unstyled-modal-description" open={createOpen} onClose={handleCreateClose} slots={{ backdrop: StyledBackdrop }}>
-                    <ModalContent sx={{ width: 800 }}>
-                        <h2 className="modal-title">Create Offer</h2>
-                        <form onSubmit={handleSubmitOffer} id="unstyled-modal-description" className="create_offer_form">
-                            <label htmlFor="">Offer :</label>
-                            <input type="text" name="offer" placeholder="Enter the Offer" onChange={handleInputChange} />
-                            <label htmlFor="">Price :</label>
-                            <input type="number" name="price" placeholder="Enter the Price" onChange={handleInputChange} />
+                    <ModalContent sx={{ width: 600 }}>
+                        <h2 className="modal-title">Create Service</h2>
+                        <form onSubmit={handleSubmitService} id="unstyled-modal-description" className="create_offer_form">
+                            <label htmlFor="">Image :</label>
+                            <input type="file" name="serviceImage" onChange={handleserviceImage} />
+                            <label htmlFor="">Service :</label>
+                            <input type="text" name="service" placeholder="Enter the Service name" onChange={handleInputChange} />
                             <button className="edit_btn">Create</button>
                         </form>
                     </ModalContent>
@@ -107,18 +116,19 @@ const Offer = () => {
                 <thead>
                     <tr key="">
                         <th>Sl</th>
-                        <th>Offer</th>
-                        <th>Price</th>
+                        <th>Images</th>
+                        <th>Services</th>
                         <th className="action_th">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {offers.map((item, index) => (
+                    {services.map((item, index) => (
                         <tr key={index}>
                             <td className="sl_td">{index + 1}</td>
-                            {/* <td className=" banner_td">{item.offer}</td> */}
-                            <td className="">{item.offer}</td>
-                            <td>{item.price}₹</td>
+                            <td className="service_images">
+                                <img src={item.serviceImage} alt={`${item.service} image`} />
+                            </td>
+                            <td>{item.service}</td>
                             <td className="actions">
                                 <div>
                                     <TriggerButton type="button" onClick={() => handleEditOpen(item._id)}>
@@ -136,12 +146,12 @@ const Offer = () => {
                 </tbody>
                 <Modal aria-labelledby="unstyled-modal-title" aria-describedby="unstyled-modal-description" open={editOpen} onClose={handleEditClose} slots={{ backdrop: StyledBackdrop }}>
                     <ModalContent sx={{ width: 800 }}>
-                        <h2 className="modal-title">Edit Offer</h2>
-                        <form onSubmit={handleEditOffer} id="unstyled-modal-description" className="create_offer_form">
-                            <label htmlFor="">Offer :</label>
-                            <input type="text" name="offer" placeholder="Enter the Offer" value={formData.offer} onChange={handleInputChange} />
-                            <label htmlFor="">Price :</label>
-                            <input type="number" name="price" placeholder="Enter the Price" value={formData.price} onChange={handleInputChange} />
+                        <h2 className="modal-title">Edit Service</h2>
+                        <form onSubmit={handleEditService} id="unstyled-modal-description" className="create_offer_form">
+                            <label htmlFor="">Image :</label>
+                            <input type="file" name="serviceImage" onChange={handleserviceImage} />
+                            <label htmlFor="">Service :</label>
+                            <input type="text" name="service" value={service} onChange={handleInputChange} />
                             <button className="edit_btn">Edit</button>
                         </form>
                     </ModalContent>
@@ -149,11 +159,11 @@ const Offer = () => {
                 <Modal aria-labelledby="unstyled-modal-title" aria-describedby="unstyled-modal-description" open={deleteOpen} onClose={handleDeleteClose} slots={{ backdrop: StyledBackdrop }}>
                     <ModalContent sx={{ width: 400 }}>
                         <h2 id="unstyled-modal-title" className="modal-title">
-                            Delete Offer
+                            Delete Service
                         </h2>
                         <p className=" modal-description">
-                            Are you sure you want to delete this offer?
-                            <button className="delete_btn" onClick={handleDeleteOffer}>
+                            Are you sure you want to delete this service?
+                            <button className="delete_btn" onClick={handleDeleteService}>
                                 Delete
                             </button>
                         </p>
@@ -164,7 +174,7 @@ const Offer = () => {
     );
 };
 
-export default Offer;
+export default Service;
 
 const Backdrop = React.forwardRef((props, ref) => {
     const { open, className, ...other } = props;

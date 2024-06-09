@@ -5,13 +5,13 @@ import ordersImg from "../../assets/calendar.svg";
 import settingsImg from "../../assets/setting-2.svg";
 import logoutImg from "../../assets/logout.svg";
 
-import "./style.css";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { allUsers, getAdmin } from "../../Actions/actions";
 import { setUsers } from "../../Redux/reducers/users";
 import { useEffect } from "react";
 import { setAdmin } from "../../Redux/reducers/admin";
+import "./style.css";
 
 const Sidebar = () => {
     const dispatch = useDispatch();
@@ -40,10 +40,10 @@ const Sidebar = () => {
     },[]);
     return (
         <div className="sidebar">
-            <div className="banner">
+            <Link to='/dashboard' className="banner">
                 <img src={logo} alt="" />
                 <h2>Laundrybin</h2>
-            </div>
+            </Link>
             <div className="sidebar_items">
                 <NavLink to="/dashboard" className={({ isActive }) => (isActive ? "active_item" : "item")}>
                     <img src={categoryImg} alt="" />
