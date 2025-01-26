@@ -5,18 +5,24 @@ import { Modal as BaseModal } from "@mui/base/Modal";
 import React, { useState } from "react";
 import editImg from "../../assets/edit.svg";
 import deleteImg from "../../assets/trash.svg";
-import { addService, deleteService, editService } from "../../Actions/actions";
+import { addProduct, deleteProduct, editProduct } from "../../Actions/actions";
 import { enqueueSnackbar } from "notistack";
 import { useSelector } from "react-redux";
-import "./style.css";
+// import "./style.css";
 
-const Service = () => {
-    const { services } = useSelector((state) => state.services);
+const Product = () => {
+    const { products } = useSelector((state) => state.products);
 
-    const [serviceImage, setServiceImage] = useState("");
-    const [service, setService] = useState("");
-    const [ServiceId, setServiceId] = useState("");
-    console.log({ ServiceId });
+    const [productImage, setProductImage] = useState(null);
+    const [productData, setProductData] = useState({
+        product: "",
+        price: "",
+    });
+    // console.log("product data =", productData);
+    // console.log('productImage =',productImage);
+
+    const [ProductId, setProductId] = useState("");
+    console.log({ ProductId });
 
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
@@ -25,39 +31,53 @@ const Service = () => {
     const handleEditClose = () => setEditOpen(false);
     const handleDeleteClose = () => setDeleteOpen(false);
 
-    const handleCreateOpen = () => setCreateOpen(true);
+    const handleCreateOpen = () => {
+        setCreateOpen(true);
+        setProductImage("");
+        setProductData({
+            product: "",
+            price: "",
+        });
+    };
     const handleCreateClose = () => setCreateOpen(false);
 
-    const handleserviceImage = (e) => {
+    const handleproductImage = (e) => {
         e.preventDefault();
-        setServiceImage(e.target.files[0]);
+        setProductImage(e.target.files[0]);
     };
     const handleInputChange = (e) => {
-        setService(e.target.value);
+        const { name, value } = e.target;
+        setProductData({ ...productData, [name]: value });
     };
     const handleEditOpen = (id) => {
-        const item = services.find((item) => {
+        setProductData({
+            product: "",
+            price: "",
+        });
+        setProductImage("");
+        const item = products.find((item) => {
             return item._id === id;
         });
 
-        setServiceId(item._id);
-        setService(item.service);
+        setProductId(item._id);
+        set(item.service);
         console.log("service =", item);
 
         setEditOpen(true);
     };
 
     const handleDeleteOpen = (id) => {
-        setServiceId(id);
+        setProductId(id);
         setDeleteOpen(true);
     };
 
-    const handleSubmitService = async (e) => {
+    const handleSubmitProduct = async (e) => {
         e.preventDefault();
         const formData = new FormData();
-        formData.append("serviceImage", serviceImage);
-        formData.append("service", service);
-        const response = await addService(formData);
+        formData.append("productImage", productImage);
+        formData.append("product", productData.product);
+        formData.append("price", productData.price);
+        const response = await addProduct(formData);
         console.log({ response });
         if (response.status) {
             enqueueSnackbar(response.message, { variant: "success" });
@@ -74,7 +94,7 @@ const Service = () => {
         const formData = new FormData();
         formData.append("serviceImage", serviceImage);
         formData.append("service", service);
-        const response = await editService(formData, ServiceId);
+        const response = await editProduct(formData, ProductId);
         console.log({ response });
         if (response.status) {
             enqueueSnackbar(response.message, { variant: "success" });
@@ -83,7 +103,7 @@ const Service = () => {
     };
 
     const handleDeleteService = async () => {
-        const response = await deleteService(ServiceId);
+        const response = await deleteProduct(ProductId);
         console.log({ response });
         if (response.error) {
             enqueueSnackbar(response.message, { variant: "error" });
@@ -97,16 +117,18 @@ const Service = () => {
         <div className="banner_component">
             <div>
                 <TriggerButton className="create_btn" type="button" onClick={handleCreateOpen}>
-                    Create Service
+                    Create Product
                 </TriggerButton>
                 <Modal aria-labelledby="unstyled-modal-title" aria-describedby="unstyled-modal-description" open={createOpen} onClose={handleCreateClose} slots={{ backdrop: StyledBackdrop }}>
                     <ModalContent sx={{ width: 600 }}>
-                        <h2 className="modal-title">Create Service</h2>
-                        <form onSubmit={handleSubmitService} id="unstyled-modal-description" className="create_offer_form">
-                            <label htmlFor="serviceImage">Image :</label>
-                            <input type="file" name="serviceImage" accept="image/*" onChange={handleserviceImage} />
-                            <label htmlFor="service">Service :</label>
-                            <input type="text" name="service" placeholder="Enter the Service name" onChange={handleInputChange} />
+                        <h2 className="modal-title">Create Product</h2>
+                        <form onSubmit={handleSubmitProduct} id="unstyled-modal-description" className="create_offer_form">
+                            <label htmlFor="">Image :</label>
+                            <input type="file" name="productImage" accept="image/*" onChange={handleproductImage} />
+                            <label htmlFor="">Product :</label>
+                            <input type="text" name="product" placeholder="Enter the Product name" onChange={handleInputChange} />
+                            <label htmlFor="">Price :</label>
+                            <input type="number" name="price" placeholder="Enter the price" onChange={handleInputChange} />
                             <button className="edit_btn">Create</button>
                         </form>
                     </ModalContent>
@@ -117,18 +139,20 @@ const Service = () => {
                     <tr key="">
                         <th>Sl</th>
                         <th>Images</th>
-                        <th>Services</th>
+                        <th>Products</th>
+                        <th>Price</th>
                         <th className="action_th">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {services.map((item, index) => (
+                    {products.map((item, index) => (
                         <tr key={index}>
                             <td className="sl_td">{index + 1}</td>
                             <td className="service_images">
-                                <img src={item.serviceImage} alt={`${item.service} image`} />
+                                <img src={item.productImage} alt={`${item.product} image`} />
                             </td>
-                            <td>{item.service}</td>
+                            <td>{item.product}</td>
+                            <td>{item.price} ₹</td>
                             <td className="actions">
                                 <div>
                                     <TriggerButton type="button" onClick={() => handleEditOpen(item._id)}>
@@ -149,9 +173,9 @@ const Service = () => {
                         <h2 className="modal-title">Edit Service</h2>
                         <form onSubmit={handleEditService} id="unstyled-modal-description" className="create_offer_form">
                             <label htmlFor="">Image :</label>
-                            <input type="file" name="serviceImage" accept="image/*" onChange={handleserviceImage} />
+                            <input type="file" name="serviceImage" accept="image/*" onChange={handleproductImage} />
                             <label htmlFor="">Service :</label>
-                            <input type="text" name="service" value={service} onChange={handleInputChange} />
+                            <input type="text" name="product" value={productData.product} onChange={handleInputChange} />
                             <button className="edit_btn">Edit</button>
                         </form>
                     </ModalContent>
@@ -174,7 +198,7 @@ const Service = () => {
     );
 };
 
-export default Service;
+export default Product;
 
 const Backdrop = React.forwardRef((props, ref) => {
     const { open, className, ...other } = props;

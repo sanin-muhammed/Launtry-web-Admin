@@ -1,16 +1,19 @@
 .orders_card{
     text-decoration: none;
-    color: #000;
-    background: #e5e5e5;
+    color: #fff;
+    background: #1facf3;
     height: 100px;
     border-radius: 5px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: 10px;
+    transition: .2s ease-in-out;
 
 }
 .orders_card:hover{
-    background: #dddddd;
+    background: #57c7ff;
+    color: #fff;
+    scale: 1.01;
     
 }

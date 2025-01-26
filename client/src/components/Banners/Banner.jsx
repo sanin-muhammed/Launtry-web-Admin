@@ -96,7 +96,7 @@ const Banner = () => {
                     <ModalContent sx={{ width: 400 }}>
                         <h2 className="modal-title">Create Banner</h2>
                         <form id="unstyled-modal-description" className="edit modal-description">
-                            <input type="file" name="bannerImage" className="bannerInput" onChange={handlebannerImage} />
+                            <input type="file" name="bannerImage" className="bannerInput" accept="image/*" onChange={handlebannerImage} />
                             <button className="edit_btn" onClick={handleSubmitBanner}>
                                 Create
                             </button>
@@ -138,7 +138,7 @@ const Banner = () => {
                     <ModalContent sx={{ width: 400 }}>
                         <h2 className="modal-title">Edit Banner</h2>
                         <form id="unstyled-modal-description" className="edit modal-description">
-                            <input type="file" name="bannerImage" className="bannerInput" onChange={handlebannerImage} />
+                            <input type="file" name="bannerImage" className="bannerInput" accept="image/*" onChange={handlebannerImage} />
                             <button className="edit_btn" onClick={handleEditBanner}>
                                 Edit
                             </button>

@@ -10,7 +10,7 @@ import store from "./Redux/store.jsx";
 ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
         <Provider store={store}>
-            <SnackbarProvider maxSnack={3}>
+            <SnackbarProvider maxSnack={3} >
                 <BrowserRouter>
                     <App />
                 </BrowserRouter>

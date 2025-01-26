@@ -1,19 +1,15 @@
 const Admin = require("../models/admin");
 const Banner = require("../models/banner");
 const Offer = require("../models/offer");
+const Product = require("../models/product");
 const Service = require("../models/service");
 const User = require("../models/users");
+const Pickup = require("../models/pickup");
 const colors = require("colors");
 
-exports.get_all_users = async (req, res) => {
-    try {
-        const users = await User.find({}, { password: 0 });
-        console.log("users = ", users);
-        res.status(200).json({ error: false, status: true, data: users });
-    } catch (error) {
-        res.status(500).json({ error: true, status: false, message: "error finding all users" });
-    }
-};
+// @des:admin api
+// method:get
+// api:/admin
 exports.get_admin = async (req, res) => {
     try {
         const admin = await Admin.findOne({}, { password: 0 });
@@ -25,6 +21,23 @@ exports.get_admin = async (req, res) => {
     }
 };
 
+// @des:all user api
+// method:get
+// api:/users
+exports.get_all_users = async (req, res) => {
+    try {
+        const users = await User.find();
+        console.log("users = ", users);
+        res.status(200).json({ error: false, status: true, data: users });
+    } catch (error) {
+        console.log("server error =", error);
+        res.status(500).json({ error: true, status: false, message: "error finding all users" });
+    }
+};
+
+// @des:edit banner api
+// method:post
+// api:/users
 exports.edit_banner_img = async (req, res) => {
     console.log(req.file);
 
@@ -172,7 +185,7 @@ exports.all_services = async (req, res) => {
 };
 
 exports.add_service = async (req, res) => {
-    console.log("req body =", req.body);
+    console.log("req body =", req.body);f
     console.log("req file =", req.file);
 
     try {
@@ -227,6 +240,141 @@ exports.delete_service = async (req, res) => {
         }
         res.status(200).json({ error: false, status: true, message: "service deleted successfully" });
         console.log("service deleted successfully".bold.yellow);
+    } catch (error) {
+        console.log("server error".bold.red);
+        res.status(500).json({ error: true, status: false, message: "server error" });
+    }
+};
+
+exports.all_products = async (req, res) => {
+    try {
+        const products = await Product.find();
+        console.log({ products });
+        res.status(200).json({ error: false, status: true, message: "find all products successfully", data: products });
+        console.log("find all products successfully".bold.yellow);
+    } catch (error) {
+        console.log("server error".bold.red);
+        res.status(500).json({ error: true, status: false, message: "server error" });
+    }
+};
+
+exports.add_product = async (req, res) => {
+    console.log("req body =", req.body);
+    console.log("req file =", req.file);
+
+    try {
+        const productImage = req.file.location;
+        const { product, price } = req.body;
+        const newProduct = new Product({ productImage, product, price });
+        await newProduct.save();
+        console.log({ newProduct });
+        res.status(200).json({ error: false, status: true, message: "product added successfully" });
+        console.log("product added successfully".bold.yellow);
+    } catch (error) {
+        console.log("server error".bold.red);
+        res.status(500).json({ error: true, status: false, message: "server error" });
+    }
+};
+
+exports.edit_product = async (req, res) => {
+    console.log("req body =", req.body);
+    console.log("req file =", req.file);
+    console.log("req query =", req.query);
+    try {
+        const { product, price } = req.body;
+        const { id } = req.query;
+        if (req.file) {
+            const productImage = req.file.location;
+            const editedProduct = await product.findByIdAndUpdate(id, { productImage, product, price });
+            console.log({ editedProduct });
+        } else {
+            const editedProduct = await Product.findByIdAndUpdate(id, { product, price });
+            console.log({ editedProduct });
+        }
+
+        res.status(200).json({ error: false, status: true, message: "product updated successfully" });
+        console.log("product updated successfully".bold.yellow);
+    } catch (error) {
+        console.log("server error".bold.red);
+        res.status(500).json({ error: true, status: false, message: "server error" });
+    }
+};
+
+exports.delete_product = async (req, res) => {
+    console.log("req query =", req.query);
+    try {
+        const { id } = req.query;
+        const deletedProduct = await Product.findByIdAndDelete(id);
+        console.log(deletedProduct);
+        if (!deletedProduct) {
+            res.status(400).json({ error: true, status: false, message: "error product deletion " });
+            return;
+        }
+        res.status(200).json({ error: false, status: true, message: "product deleted successfully" });
+        console.log("product deleted successfully".bold.yellow);
+    } catch (error) {
+        console.log("server error".bold.red);
+        res.status(500).json({ error: true, status: false, message: "server error" });
+    }
+};
+
+exports.all_pickups = async (req, res) => {
+    try {
+        const pickups = await Pickup.find();
+        console.log({ pickups });
+        res.status(200).json({ error: false, status: true, message: "find all pickups successfully", data: pickups });
+        console.log("find all pickups successfully".bold.yellow);
+    } catch (error) {
+        console.log("server error".bold.red);
+        res.status(500).json({ error: true, status: false, message: "server error" });
+    }
+};
+
+exports.add_pickup = async (req, res) => {
+    console.log(req.body);
+    try {
+        const { date, slotes } = req.body;
+        const newPickup = new Pickup({ date, slotes });
+        await newPickup.save();
+        console.log(newPickup);
+        console.log("Pick Up Date added".bold.yellow);
+        res.status(200).json({ error: false, status: true, message: "Pick Up Date added" });
+    } catch (error) {
+        console.log("server error".bold.red);
+        res.status(200).json({ error: true, status: false, message: "server error" });
+    }
+};
+
+exports.edit_pickup = async (req, res) => {
+    console.log("req body =", req.body);
+    console.log("req query =", req.query);
+    try {
+        const { date, slotes } = req.body;
+        const { id } = req.query;
+
+        const editedPickup = await Pickup.findByIdAndUpdate(id, { date, slotes });
+        console.log({ editedPickup });
+
+        res.status(200).json({ error: false, status: true, message: "Pickup updated successfully" });
+        console.log("Pickup updated successfully".bold.yellow);
+    } catch (error) {
+        console.log("server error".bold.red);
+        res.status(500).json({ error: true, status: false, message: "server error" });
+    }
+};
+
+exports.delete_pickup = async (req, res) => {
+    console.log("req query =", req.query);
+    try {
+        const { id } = req.query;
+        const deletedPickup = await Pickup.findByIdAndDelete(id);
+        console.log(deletedPickup);
+        if (!deletedPickup) {
+            res.status(400).json({ error: true, status: false, message: "error pickup deletion " });
+            return;
+        }
+        res.status(200).json({ error: false, status: true, message: "pickup deleted successfully" });
+        console.log("pickup deleted successfully".bold.yellow);
     } catch (error) {
         console.log("server error".bold.red);
         res.status(500).json({ error: true, status: false, message: "server error" });

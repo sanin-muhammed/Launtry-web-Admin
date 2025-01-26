@@ -1,8 +1,8 @@
-import axios from "./axiosConfig";
+import axiosInstance from "../config/axiosConfig";
 
 export const loginUser = async (formData) => {
     try {
-        const response = await axios.post("/login", formData);
+        const response = await axiosInstance.post("/login", formData);
         console.log("successful:", response.data);
         return response.data;
     } catch (error) {

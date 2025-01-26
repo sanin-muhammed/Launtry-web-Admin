@@ -1,0 +1,60 @@
+.landingPage_container{
+    text-decoration: none;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    animation: opacityAnimation 1s ease-out ;
+}
+.logo {
+    width: 100px;
+    animation: zoom 1s ease-in-out;
+    transition: .3s ease-in-out;
+    
+}
+.brand_name {
+    color: #567177;
+    font-weight: 900;
+    font-size: 3em;
+    transition: .3s ease-in-out;
+}
+@keyframes zoom {
+    0% {
+        width: 0%;
+        rotate:360deg;
+    }
+    70%{
+        width: 200px;
+        rotate:-50deg;
+    }
+}
+
+@keyframes opacityAnimation {
+    0%{
+        opacity: 0;
+    }
+    40%,100% {
+        opacity: 1;
+    }
+}
+
+@media (max-width:500px) {
+    .logo{
+        width: 50px;
+    }
+    .brand_name{
+        font-size: 2em;
+    }
+}
+@media (max-width:350px) {
+    .landingPage_container{
+        gap: 10px;
+    }
+    .logo{
+        width: 40px;
+    }
+    .brand_name{
+        font-size: 1.3em;
+    }
+}

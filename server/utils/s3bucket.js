@@ -14,7 +14,7 @@ const s3 = new S3Client({
 
 const storage = multerS3({
     s3: s3,
-    bucket: "sanins3bucket",
+    bucket: "sanins3bucket", // bucket name
     acl: "public-read", // Set the ACL for the uploaded file
     metadata: function (req, file, cb) {
         cb(null, { fieldName: file.fieldname });

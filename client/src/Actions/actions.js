@@ -1,4 +1,4 @@
-import axios from "./axiosConfig";
+import axios from "../config/axiosConfig";
 
 export const allUsers = async () => {
     try {
@@ -174,6 +174,57 @@ export const editService = async (formData, id) => {
 export const deleteService = async (id) => {
     try {
         const response = await axios.delete(`/delete_service?id=${id}`);
+        console.log("successful:", response.data);
+        return response.data;
+    } catch (error) {
+        console.log(" error =", error.response.data);
+        return error.response.data;
+    }
+};
+// products
+
+export const allProducts = async () => {
+    try {
+        const response = await axios.get("/all_products");
+        console.log(" successful:", response.data);
+        return response.data;
+    } catch (error) {
+        console.log(" error =", error.response.data);
+        return error.response.data;
+    }
+};
+
+export const addProduct = async (formData) => {
+    const headers = {
+        "Content-Type": "multipart/form-data",
+    };
+    try {
+        const response = await axios.post("/add_product", formData, { headers });
+        console.log("successful:", response.data);
+        return response.data;
+    } catch (error) {
+        console.log(" error =", error.response.data);
+        return error.response.data;
+    }
+};
+
+export const editProduct = async (formData, id) => {
+    const headers = {
+        "Content-Type": "multipart/form-data",
+    };
+    try {
+        const response = await axios.post(`/edit_product?id=${id}`, formData, { headers });
+        console.log("successful:", response.data);
+        return response.data;
+    } catch (error) {
+        console.log(" error =", error.response.data);
+        return error.response.data;
+    }
+};
+
+export const deleteProduct = async (id) => {
+    try {
+        const response = await axios.delete(`/delete_product?id=${id}`);
         console.log("successful:", response.data);
         return response.data;
     } catch (error) {

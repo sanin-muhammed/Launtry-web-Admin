@@ -1,6 +1,6 @@
 .sidebar {
     min-width: 250px;
-    background: #e5e5e5;
+    background: #ecf3f6;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -63,6 +63,11 @@
     color: #a65959;
     border-radius: 6px;
     cursor: pointer;
+    text-decoration: none;
+    transition: 0.2s ease-in-out;
+    &&:hover {
+        gap: 20px;
+    }
 }
 
 .active_item {

@@ -1,112 +1,144 @@
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import clsx from "clsx";
 import { styled, css } from "@mui/system";
 import { Modal as BaseModal } from "@mui/base/Modal";
-import React, { useState } from "react";
+import { compareAsc, format } from "date-fns";
 import editImg from "../../assets/edit.svg";
 import deleteImg from "../../assets/trash.svg";
-import { addService, deleteService, editService } from "../../Actions/actions";
 import { enqueueSnackbar } from "notistack";
-import { useSelector } from "react-redux";
 import "./style.css";
-
-const Service = () => {
-    const { services } = useSelector((state) => state.services);
-
-    const [serviceImage, setServiceImage] = useState("");
-    const [service, setService] = useState("");
-    const [ServiceId, setServiceId] = useState("");
-    console.log({ ServiceId });
-
+import { addPickup, deletePickup, editPickup } from "../../Actions/pickupActions";
+import { useSelector } from "react-redux";
+const Pickup = () => {
+    const { pickups } = useSelector((state) => state.pickups);
+    const [pickupId, setPickupId] = useState("");
+    console.log({ pickupId });
     const [editOpen, setEditOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [createOpen, setCreateOpen] = useState(false);
 
-    const handleEditClose = () => setEditOpen(false);
+    const [selectedSlots, setSelectedSlots] = useState([]);
+    const [date, setDate] = useState("");
+    console.log({ date });
+
+    const slots = ["09:00 AM - 10:00 AM", "10:00 AM - 11:00 AM", "11:00 AM - 12:00 PM", "12:00 PM - 01:00 PM", "01:00 PM - 02:00 PM", "02:00 PM - 03:00 PM", "03:00 PM - 04:00 PM", "04:00 PM - 05:00 PM"];
+    const handleSlotChange = (e) => {
+        const { value, checked } = e.target;
+        if (checked) {
+            setSelectedSlots([...selectedSlots, value]);
+        } else {
+            setSelectedSlots(selectedSlots.filter((slot) => slot !== value));
+        }
+    };
+    const handleEditClose = () => {
+        setDate("");
+        setSelectedSlots([]);
+        setEditOpen(false);
+    };
     const handleDeleteClose = () => setDeleteOpen(false);
 
     const handleCreateOpen = () => setCreateOpen(true);
     const handleCreateClose = () => setCreateOpen(false);
 
-    const handleserviceImage = (e) => {
-        e.preventDefault();
-        setServiceImage(e.target.files[0]);
+    const formatDate = (date) => {
+        return format(new Date(date), "dd-MMM-yyyy");
     };
-    const handleInputChange = (e) => {
-        setService(e.target.value);
+    const formatDateToEdit = (date) => {
+        return format(new Date(date), "yyyy-MM-dd");
     };
-    const handleEditOpen = (id) => {
-        const item = services.find((item) => {
-            return item._id === id;
-        });
 
-        setServiceId(item._id);
-        setService(item.service);
-        console.log("service =", item);
-
+    const handleEditOpen = async (id) => {
+        console.log({ id });
+        setPickupId(id);
+        const pickup = pickups.find((item) => item._id === id);
+        console.log("p ===", pickup);
+        const fDate = formatDateToEdit(pickup.date);
+        console.log({ fDate });
+        setDate(fDate);
+        setSelectedSlots(pickup.slotes);
         setEditOpen(true);
     };
-
     const handleDeleteOpen = (id) => {
-        setServiceId(id);
+        setPickupId(id);
         setDeleteOpen(true);
     };
 
-    const handleSubmitService = async (e) => {
+    const handleEditPackup = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append("serviceImage", serviceImage);
-        formData.append("service", service);
-        const response = await addService(formData);
-        console.log({ response });
-        if (response.status) {
-            enqueueSnackbar(response.message, { variant: "success" });
-            handleCreateClose();
-        }
-    };
-    const handleEditService = async (e) => {
-        e.preventDefault();
-        if (!serviceImage && !service) {
-            enqueueSnackbar("fill the field you want to update ", { variant: "warning" });
+        if (!date) {
+            enqueueSnackbar("enter a date", { variant: "warning" });
+            return;
+        } else if (selectedSlots.length === 0) {
+            enqueueSnackbar("choose slotes", { variant: "warning" });
             return;
         }
-        console.log("formdata =", { service });
-        const formData = new FormData();
-        formData.append("serviceImage", serviceImage);
-        formData.append("service", service);
-        const response = await editService(formData, ServiceId);
-        console.log({ response });
+        const formattedDate = formatDate(date);
+        const response = await editPickup(pickupId, { date: formattedDate, slotes: selectedSlots });
         if (response.status) {
             enqueueSnackbar(response.message, { variant: "success" });
-            handleEditClose();
-        }
-    };
-
-    const handleDeleteService = async () => {
-        const response = await deleteService(ServiceId);
-        console.log({ response });
-        if (response.error) {
+            setDate("");
+            setEditOpen(false);
+        } else {
             enqueueSnackbar(response.message, { variant: "error" });
-            return;
-        } else if (response.status) {
-            enqueueSnackbar(response.message, { variant: "success" });
         }
-        setDeleteOpen(false);
     };
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        console.log(selectedSlots);
+        if (!date) {
+            enqueueSnackbar("enter a date", { variant: "warning" });
+            return;
+        } else if (selectedSlots.length === 0) {
+            enqueueSnackbar("choose slotes", { variant: "warning" });
+            return;
+        }
+        console.log({ date, selectedSlots });
+        const formattedDate = formatDate(date);
+
+        const response = await addPickup({ date: formattedDate, slotes: selectedSlots });
+        if (response.status) {
+            enqueueSnackbar(response.message, { variant: "success" });
+            setDate("");
+            setCreateOpen(false);
+        } else {
+            enqueueSnackbar(response.message, { variant: "error" });
+        }
+    };
+    const handleDeletePickup = async () => {
+        const response = await deletePickup(pickupId);
+        if (response.status) {
+            enqueueSnackbar(response.message, { variant: "success" });
+            setPickupId("");
+            setDeleteOpen(false);
+        } else {
+            enqueueSnackbar(response.message, { variant: "error" });
+        }
+    };
+    console.log("selected =", selectedSlots);
     return (
         <div className="banner_component">
             <div>
                 <TriggerButton className="create_btn" type="button" onClick={handleCreateOpen}>
-                    Create Service
+                    Create
                 </TriggerButton>
                 <Modal aria-labelledby="unstyled-modal-title" aria-describedby="unstyled-modal-description" open={createOpen} onClose={handleCreateClose} slots={{ backdrop: StyledBackdrop }}>
-                    <ModalContent sx={{ width: 600 }}>
-                        <h2 className="modal-title">Create Service</h2>
-                        <form onSubmit={handleSubmitService} id="unstyled-modal-description" className="create_offer_form">
-                            <label htmlFor="serviceImage">Image :</label>
-                            <input type="file" name="serviceImage" accept="image/*" onChange={handleserviceImage} />
-                            <label htmlFor="service">Service :</label>
-                            <input type="text" name="service" placeholder="Enter the Service name" onChange={handleInputChange} />
+                    <ModalContent sx={{ width: 500 }}>
+                        <h2 className="modal-title">Create Pickup</h2>
+                        <form onSubmit={handleSubmit} id="unstyled-modal-description" className="create_offer_form">
+                            <label htmlFor="date">Date :</label>
+                            <input type="date" name="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                            <label htmlFor="">Slotes :</label>
+                            <div className="slotes_div">
+                                {slots.map((slot) => (
+                                    <div key={slot} className="slotes">
+                                        <label>
+                                            <input type="checkbox" value={slot} checked={selectedSlots.includes(slot)} onChange={handleSlotChange} />
+                                            <p>{slot}</p>
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
                             <button className="edit_btn">Create</button>
                         </form>
                     </ModalContent>
@@ -116,19 +148,23 @@ const Service = () => {
                 <thead>
                     <tr key="">
                         <th>Sl</th>
-                        <th>Images</th>
-                        <th>Services</th>
+                        <th>Date</th>
+                        <th>Slotes</th>
                         <th className="action_th">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {services.map((item, index) => (
+                    {pickups.map((item, index) => (
                         <tr key={index}>
                             <td className="sl_td">{index + 1}</td>
-                            <td className="service_images">
-                                <img src={item.serviceImage} alt={`${item.service} image`} />
+                            <td className="">{item.date}</td>
+                            <td className="slote_td">
+                                <ul>
+                                    {item.slotes.map((slote, index) => (
+                                        <li key={index}>{slote}</li>
+                                    ))}
+                                </ul>
                             </td>
-                            <td>{item.service}</td>
                             <td className="actions">
                                 <div>
                                     <TriggerButton type="button" onClick={() => handleEditOpen(item._id)}>
@@ -146,12 +182,22 @@ const Service = () => {
                 </tbody>
                 <Modal aria-labelledby="unstyled-modal-title" aria-describedby="unstyled-modal-description" open={editOpen} onClose={handleEditClose} slots={{ backdrop: StyledBackdrop }}>
                     <ModalContent sx={{ width: 800 }}>
-                        <h2 className="modal-title">Edit Service</h2>
-                        <form onSubmit={handleEditService} id="unstyled-modal-description" className="create_offer_form">
-                            <label htmlFor="">Image :</label>
-                            <input type="file" name="serviceImage" accept="image/*" onChange={handleserviceImage} />
-                            <label htmlFor="">Service :</label>
-                            <input type="text" name="service" value={service} onChange={handleInputChange} />
+                        <h2 className="modal-title">Edit Pickup</h2>
+                        <form onSubmit={handleEditPackup} id="unstyled-modal-description" className="create_offer_form">
+                            <label htmlFor="date">Date :</label>
+                            <input type="date" name="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                            <label htmlFor="slotes">Slotes :</label>
+                            <div className="slotes_div">
+                                {slots.map((slot) => (
+                                    <div key={slot} className="slotes">
+                                        <label>
+                                            <input type="checkbox" value={slot} checked={selectedSlots.includes(slot)} onChange={handleSlotChange} />
+                                            <p>{slot}</p>
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                            {/* <input type="text" name="slotes" value={date} onChange={(e) => setDate(e.target.value)} /> */}
                             <button className="edit_btn">Edit</button>
                         </form>
                     </ModalContent>
@@ -159,11 +205,11 @@ const Service = () => {
                 <Modal aria-labelledby="unstyled-modal-title" aria-describedby="unstyled-modal-description" open={deleteOpen} onClose={handleDeleteClose} slots={{ backdrop: StyledBackdrop }}>
                     <ModalContent sx={{ width: 400 }}>
                         <h2 id="unstyled-modal-title" className="modal-title">
-                            Delete Service
+                            Delete Pickup
                         </h2>
                         <p className=" modal-description">
-                            Are you sure you want to delete this service?
-                            <button className="delete_btn" onClick={handleDeleteService}>
+                            Are you sure you want to delete this pickup ?
+                            <button className="delete_btn" onClick={handleDeletePickup}>
                                 Delete
                             </button>
                         </p>
@@ -174,7 +220,7 @@ const Service = () => {
     );
 };
 
-export default Service;
+export default Pickup;
 
 const Backdrop = React.forwardRef((props, ref) => {
     const { open, className, ...other } = props;

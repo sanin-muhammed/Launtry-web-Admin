@@ -12,9 +12,12 @@ import { setUsers } from "../../Redux/reducers/users";
 import { useEffect } from "react";
 import { setAdmin } from "../../Redux/reducers/admin";
 import "./style.css";
+import { setOrder } from "../../Redux/reducers/orders";
+import { allOrders } from "../../Actions/orderActions";
 
 const Sidebar = () => {
     const dispatch = useDispatch();
+
     const fetchAllUsers = async () => {
         const response = await allUsers();
         if (response.error) {
@@ -33,14 +36,21 @@ const Sidebar = () => {
             dispatch(setAdmin(response.data));
         }
     };
+    const fetchOrders = async () => {
+        const response = await allOrders();
+        if (response.status) {
+            dispatch(setOrder(response.data));
+        }
+    };
 
     useEffect(() => {
         fetchAllUsers();
+        fetchOrders();
         fetchAdmin();
-    },[]);
+    }, []);
     return (
         <div className="sidebar">
-            <Link to='/dashboard' className="banner">
+            <Link to="/dashboard" className="banner">
                 <img src={logo} alt="" />
                 <h2>Laundrybin</h2>
             </Link>
@@ -63,10 +73,10 @@ const Sidebar = () => {
                     <img src={settingsImg} alt="" />
                     <h4>Settings</h4>
                 </NavLink>
-                <div className="logout">
+                <Link to="/login" className="logout">
                     <img src={logoutImg} alt="" />
                     <h4>Logout</h4>
-                </div>
+                </Link>
             </div>
         </div>
     );

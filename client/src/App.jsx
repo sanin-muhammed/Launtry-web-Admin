@@ -9,20 +9,38 @@ import { useDispatch } from "react-redux";
 import { allUsers } from "./Actions/actions";
 import { setUsers } from "./Redux/reducers/users";
 import { useEffect } from "react";
+import LandingPage from "./pages/LandingPage/LandingPage";
 function App() {
-    
-
-    return (
-        <>
-            <Routes>
-                <Route path="/" Component={LoginPage} />
-                <Route path="/dashboard" Component={Dashboard} />
-                <Route path="/users" Component={Users} />
-                <Route path="/orders" Component={Orders} />
-                <Route path="/settings" Component={Settings} />
-            </Routes>
-        </>
-    );
+  return (
+    <>
+      <Routes>
+        <Route
+          path="/"
+          Component={LandingPage}
+        />
+        <Route
+          path="/login"
+          Component={LoginPage}
+        />
+        <Route
+          path="/dashboard"
+          Component={Dashboard}
+        />
+        <Route
+          path="/users"
+          Component={Users}
+        />
+        <Route
+          path="/orders"
+          Component={Orders}
+        />
+        <Route
+          path="/settings"
+          Component={Settings}
+        />
+      </Routes>
+    </>
+  );
 }
 
 export default App;

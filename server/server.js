@@ -6,6 +6,8 @@ const morgan = require("morgan");
 const connectDB = require("./config/database");
 const router = require("./routes/authRoutes");
 const routes = require("./routes/routes");
+const orderRoutes = require("./routes/orderRoutes");
+
 const PORT = 2002;
 
 app.use(express.json());
@@ -16,5 +18,6 @@ connectDB();
 
 app.use("/api", router);
 app.use("/api", routes);
+app.use("/api", orderRoutes);
 
 app.listen(PORT, () => console.log("server running on port".bold, PORT));

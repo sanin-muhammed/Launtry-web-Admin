@@ -6,6 +6,9 @@ import adminReducer from "./reducers/admin";
 import bannerReducer from "./reducers/banners";
 import offerReducer from "./reducers/offers";
 import serviceReducer from "./reducers/services";
+import productReducer from "./reducers/products";
+import pickupReducer from "./reducers/pickups";
+import orderReducer from "./reducers/orders";
 
 const store = configureStore({
     reducer: {
@@ -14,6 +17,9 @@ const store = configureStore({
         banners: bannerReducer,
         offers: offerReducer,
         services: serviceReducer,
+        products: productReducer,
+        pickups: pickupReducer,
+        orders: orderReducer,
     },
 });
 
